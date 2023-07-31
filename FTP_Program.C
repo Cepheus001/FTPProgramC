@@ -1,0 +1,171 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+//#include <curl/curl.h>
+#include <unistd.h>
+
+void launchmain();
+
+typedef void (*funcMainPtr)();
+
+typedef struct Node_NoArgs {
+    void (*PtrForFunc)();
+    struct Node_NoArgs *next;
+} Node_NoArgs;
+
+typedef struct {
+    char URI_SERV[256];
+    char FTPPSWD[64];
+    char FTPUSR[64];
+} profileFTP;
+
+
+void nodeAdd_NoArgs(Node_NoArgs **head, void (*PtrForFunc)()) {
+    Node_NoArgs *node_new =(Node_NoArgs*)malloc(sizeof(Node_NoArgs));
+    node_new->PtrForFunc = PtrForFunc;
+    node_new->next = *head;
+    *head = node_new;
+}
+
+void list_Free(Node_NoArgs *head) {
+    while (head != NULL) {
+        Node_NoArgs* tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+/* void exit() {
+
+    list_Free(linkedlist);
+} */
+
+void func_Call_Index_NoArgs(Node_NoArgs *head, int index) {
+    int i = 0;
+    while (head != NULL) {
+        if (i == index) {
+            head->PtrForFunc();
+            return;
+        }
+        head = head->next;
+        i++;
+    }
+    printf("Invalid Index entry. Exiting...");
+}
+
+void profileLoad(profileFTP *profile, const char *filename) {
+    FILE *ProfileFTPFile = fopen(filename, "rb");
+    if (!ProfileFTPFile) {
+        fprintf(stderr, "Error - Unable to read file: %s\n", ProfileFTPFile);
+        return;
+    }
+    fread(profile, sizeof(profileFTP), 1, ProfileFTPFile);
+    fclose(ProfileFTPFile);
+}
+
+void saveProfile(const profileFTP *profile, const char *filename) {
+    system("cls");
+    FILE *ProfileFTPFile = fopen(filename, "wb");
+    if (!ProfileFTPFile) {
+        fprintf(stderr, "Error - Unable to open file to write to: %s\n", filename);
+        return;
+    }
+    fwrite(profile, sizeof(profileFTP), 1, ProfileFTPFile);
+    fclose(ProfileFTPFile);
+}
+
+void createProfile() {
+    profileFTP usrprofile;
+    Node_NoArgs *linkedlist = NULL;
+
+   // nodeAdd_NoArgs(&linkedlist, mainmenu);
+    nodeAdd_NoArgs(&linkedlist, createProfile);
+
+    funcMainPtr funcmainptr = launchmain;
+
+    char yn;
+    int yn2;
+
+    system("cls");
+    printf("Enter the Desired URI you wish to connect to: ");
+    scanf("%s", &usrprofile.URI_SERV);
+    system("cls");
+    printf("\nIs this the correct information? Your URI is: %s\n", usrprofile.URI_SERV);
+    printf("Type [Y/N] to continue: ");
+    scanf("%s", yn);
+    switch(yn) {
+        case 'y':
+            system("cls");
+            break;
+        case 'n':
+            system("cls");
+            printf("\nWould you like to go back to the main menu?\n");
+            printf("[1] - Main Menu\n");
+            printf("[2] - Restart Profile Creation\n");
+            scanf("%d", &yn2);
+            if (yn2 == 1) {
+                system("cls");
+                (*funcmainptr)();
+                list_Free(linkedlist);
+            } else if (yn2 == 2) {
+                (*funcmainptr)();
+                list_Free(linkedlist);
+            } else {
+                printf("Invalid Input. Exiting...");
+                sleep(3);
+                system("cls");
+                (*funcmainptr)();
+                list_Free(linkedlist);
+            }
+        default:
+            printf("\nInvalid input. Resetting...");
+            sleep(3);
+            (*funcmainptr)();
+            list_Free(linkedlist);
+    }
+
+}
+
+void mainmenu() { //main menu function with basic menu functions
+    Node_NoArgs *linkedlist = NULL;
+
+   // nodeAdd_NoArgs(&linkedlist, exit);
+    nodeAdd_NoArgs(&linkedlist, createProfile);
+
+    int input;
+    printf("====================\n");
+    printf("[1] - Create Profile\n");
+    printf("[2] - Select Profile\n");
+    printf("[3] - Exit          \n");
+    printf("====================\n\n");
+    printf("Enter Input: ");
+    scanf("%d", &input);
+    switch(input) {
+        case 1:
+            func_Call_Index_NoArgs(linkedlist, 0);
+            list_Free(linkedlist);
+            break;
+        case 2:
+            list_Free(linkedlist);
+            break;
+        case 3:
+            list_Free(linkedlist);
+            break;
+        default:
+            printf("\nError. Input is Invalid.\n");
+            list_Free(linkedlist);
+            break;
+    }
+}
+
+int main() {
+
+    launchmain();
+
+    return 0;
+}
+
+void launchmain() {
+    mainmenu();
+}
