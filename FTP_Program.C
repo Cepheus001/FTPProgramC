@@ -40,11 +40,6 @@ void list_Free(Node_NoArgs *head) {
     }
 }
 
-/* void exit() {
-
-    list_Free(linkedlist);
-} */
-
 void func_Call_Index_NoArgs(Node_NoArgs *head, int index) {
     int i = 0;
     while (head != NULL) {
@@ -83,27 +78,26 @@ void createProfile() {
     profileFTP usrprofile;
     Node_NoArgs *linkedlist = NULL;
 
-   // nodeAdd_NoArgs(&linkedlist, mainmenu);
     nodeAdd_NoArgs(&linkedlist, createProfile);
 
     funcMainPtr funcmainptr = launchmain;
 
     char yn;
-    int yn2;
 
     system("cls");
     printf("Enter the Desired URI you wish to connect to: ");
     scanf("%255s", &usrprofile.URI_SERV);
     system("cls");
-    printf("Is this the correct information? Your URI is: %s\n", usrprofile.URI_SERV);
-    printf("Type [Y/N] to continue: ");
-    scanf("%c", yn);
+    printf("Is this the correct information? Your URI is: %s", usrprofile.URI_SERV);
+    printf("\nType [Y/N] to continue: ");
+    scanf("%s", yn);
     switch(yn) {
         case 'y':
             system("cls");
             clearInputBuffer();
             break;
         case 'n':
+            int yn2;
             system("cls");
             printf("\nWould you like to go back to the main menu?\n");
             printf("[1] - Main Menu\n");
@@ -134,7 +128,7 @@ void createProfile() {
             list_Free(linkedlist);
             (*funcmainptr)();
     }
-
+    clearInputBuffer();
 }
 
 void mainmenu() { //main menu function with basic menu functions
@@ -176,6 +170,7 @@ void mainmenu() { //main menu function with basic menu functions
             (*funcmainptr)();
             break;
     }
+    clearInputBuffer();
 }
 
 int main() {
