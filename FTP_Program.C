@@ -134,7 +134,8 @@ void mainmenu() { //main menu function with basic menu functions
     nodeAdd_NoArgs(&linkedlist, createProfile);
 
     int input;
-    printf("====================\n");
+    system("cls");
+    printf("\n====================\n");
     printf("[1] - Create Profile\n");
     printf("[2] - Select Profile\n");
     printf("[3] - Exit          \n");
