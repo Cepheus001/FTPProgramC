@@ -20,6 +20,10 @@ typedef struct {
     char FTPUSR[64];
 } profileFTP;
 
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
 
 void nodeAdd_NoArgs(Node_NoArgs **head, void (*PtrForFunc)()) {
     Node_NoArgs *node_new =(Node_NoArgs*)malloc(sizeof(Node_NoArgs));
@@ -89,14 +93,15 @@ void createProfile() {
 
     system("cls");
     printf("Enter the Desired URI you wish to connect to: ");
-    scanf("%s", &usrprofile.URI_SERV);
+    scanf("%255s", &usrprofile.URI_SERV);
     system("cls");
-    printf("\nIs this the correct information? Your URI is: %s\n", usrprofile.URI_SERV);
+    printf("Is this the correct information? Your URI is: %s\n", usrprofile.URI_SERV);
     printf("Type [Y/N] to continue: ");
-    scanf("%s", yn);
+    scanf("%c", yn);
     switch(yn) {
         case 'y':
             system("cls");
+            clearInputBuffer();
             break;
         case 'n':
             system("cls");
@@ -106,29 +111,37 @@ void createProfile() {
             scanf("%d", &yn2);
             if (yn2 == 1) {
                 system("cls");
-                (*funcmainptr)();
                 list_Free(linkedlist);
+                clearInputBuffer();
+                (*funcmainptr)();
             } else if (yn2 == 2) {
-                (*funcmainptr)();
                 list_Free(linkedlist);
+                clearInputBuffer();
+                (*funcmainptr)();
             } else {
                 printf("Invalid Input. Exiting...");
                 sleep(3);
                 system("cls");
-                (*funcmainptr)();
                 list_Free(linkedlist);
+                clearInputBuffer();
+                (*funcmainptr)();
             }
+            break;
         default:
             printf("\nInvalid input. Resetting...");
             sleep(3);
-            (*funcmainptr)();
+            clearInputBuffer();
             list_Free(linkedlist);
+            (*funcmainptr)();
     }
 
 }
 
 void mainmenu() { //main menu function with basic menu functions
+    
     Node_NoArgs *linkedlist = NULL;
+
+    funcMainPtr funcmainptr = launchmain;
 
    // nodeAdd_NoArgs(&linkedlist, exit);
     nodeAdd_NoArgs(&linkedlist, createProfile);
@@ -144,18 +157,23 @@ void mainmenu() { //main menu function with basic menu functions
     scanf("%d", &input);
     switch(input) {
         case 1:
-            func_Call_Index_NoArgs(linkedlist, 0);
             list_Free(linkedlist);
+            clearInputBuffer();
+            func_Call_Index_NoArgs(linkedlist, 0);
             break;
         case 2:
             list_Free(linkedlist);
+            clearInputBuffer();
             break;
         case 3:
             list_Free(linkedlist);
+            clearInputBuffer();
             break;
         default:
             printf("\nError. Input is Invalid.\n");
+            clearInputBuffer();
             list_Free(linkedlist);
+            (*funcmainptr)();
             break;
     }
 }
