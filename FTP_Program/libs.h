@@ -6,8 +6,8 @@
 #include <math.h>
 #include <string.h>
 #include <unistd.h>
+#include "buffclear.h"
 #include "menu.h"
 #include "createprof.h"
-#include "buffclear.h"
 
 #endif

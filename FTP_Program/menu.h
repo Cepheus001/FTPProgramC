@@ -1,7 +1,6 @@
 #ifndef MENU_MAIN
 #define MENU_MAIN
 
-#include "buffclear.h"
 #include "createprof.h"
 
 void menucall();
@@ -13,7 +12,7 @@ int mainmenu() { //main menu function with basic menu functions
 
     callmenu CallMenu0 = menucall;
 
-    int input;
+    char input[10];
     system("cls");
     printf("\n====================\n");
     printf("[1] - Create Profile\n");
@@ -21,25 +20,25 @@ int mainmenu() { //main menu function with basic menu functions
     printf("[3] - Exit          \n");
     printf("====================\n\n");
     printf("Enter Input: ");
-    scanf("%d", &input);
-    switch(input) {
-        case 1:
-            clearInputBuffer();
+    gets(input);
+    switch(*input) {
+        case '1':
+            fflush(stdin);
             createProfile();
             break;
-        case 2:
-            clearInputBuffer();
+        case '2':
+            fflush(stdin);
+            (*CallMenu0)();
             break;
-        case 3:
-            clearInputBuffer();
+        case '3':
             break;
         default:
             printf("\nError. Input is Invalid.\n");
-            clearInputBuffer();
+            fflush(stdin);
             (*CallMenu0)();
             break;
     }
-    clearInputBuffer();
+    fflush(stdin);
     return 0;
 }
 
