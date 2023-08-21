@@ -7,7 +7,6 @@ void menucall();
 
 typedef void (*callmenu)();
 
-
 int mainmenu() { //main menu function with basic menu functions
 
     callmenu CallMenu0 = menucall;
@@ -24,7 +23,7 @@ int mainmenu() { //main menu function with basic menu functions
     switch(*input) {
         case '1':
             fflush(stdin);
-            createProfile();
+            createProfileMenu();
             break;
         case '2':
             fflush(stdin);
