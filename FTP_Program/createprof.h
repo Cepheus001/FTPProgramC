@@ -216,8 +216,16 @@ void storeProfile() {
     system("cls");
     printf("Enter the file name here: ");
     scanf("%s", filename);
+
+     for (int i = 0; i <= sizeof(filename); i++) {
+        if (isspace(filename[i])) {
+            filename[i] = '_';
+        }
+    }
+
     strncat(dir, filename, 64);
     strncat(dir, ".dat", 6);
+
     FILE *fp = fopen(dir, "wb");
     if (fp == NULL) {
         clearCharBuff();
@@ -232,6 +240,9 @@ void storeProfile() {
     fwrite(&usrprofile, sizeof(profileFTP), 1, fp);
 
     fclose(fp);
+
+    clearCharBuff();
+    (*CallMenu1)();
 }
 
 void CallstrProf() {
