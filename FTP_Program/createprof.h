@@ -6,11 +6,15 @@ void menucall();
 
 void CallCrProf();
 
+void checkDir();
+
 void storeProfile();
 
 typedef void (*callmenu)();
 
 typedef void (*callCreateProf)();
+
+typedef void (*chkDir)();
 
 typedef void (*strProf)();
 
@@ -25,7 +29,7 @@ int createProfileMenu() {
 
     callmenu CallMenu1 = menucall;
     callCreateProf CallProf = CallCrProf;
-    strProf StoreProfile = storeProfile;
+    chkDir StoreProfile = checkDir;
 
     char yn[10];
 
@@ -167,23 +171,75 @@ int createProfileMenu() {
     return 0;
 }
 
-void storeProfile() {
+void checkDir() {
+
+    callmenu CallMenu1 = menucall;
+    strProf strprof = storeProfile;
+
     const char *CheckDir = "Profiles";
 
     struct stat dirStat;
     if(stat(CheckDir, &dirStat) == 0) {
         if (S_ISDIR(dirStat.st_mode)) {
             printf("This directory exists!\n");
+            sleep(2);
+            system("cls");
+            (*strprof)();
         } else {
             printf("Path exists, but it's not a directory.\n");
+            sleep(2);
+            (*CallMenu1)();
         }
     } else {
         printf("Directory does not exist.\n");
+        CreateDirectory("Profiles/", NULL);
+        printf("Directory has been created!\n");
+        sleep(2);
+        system("cls");
+        (*strprof)();
     }
+}
+
+void storeProfile() {
+    
+    profileFTP *usrprofile;
+    
+    callmenu CallMenu1 = menucall;
+
+    char filename[20];
+    char dir[256] = "Profiles\\";
+
+    printf("This is your FTP profile!\n");
+    printf("Username: %s\n", usrprofile->FTPUSR);
+    printf("Password: %s\n", usrprofile->FTPPSWD);
+    sleep(2);
+    system("cls");
+    printf("Enter the file name here: ");
+    scanf("%s", filename);
+    strncat(dir, filename, 64);
+    strncat(dir, ".dat", 6);
+    FILE *fp = fopen(dir, "wb");
+    if (fp == NULL) {
+        clearCharBuff();
+        perror("An error occured while opening the file!");
+        sleep(2);
+        system("cls");
+        printf("Going back to main menu...");
+        sleep(2);
+        (*CallMenu1)();
+    }
+
+    fwrite(&usrprofile, sizeof(profileFTP), 1, fp);
+
+    fclose(fp);
 }
 
 void CallstrProf() {
     storeProfile();
+}
+
+void CallchkProf() {
+    checkDir();
 }
 
 void CallCrProf() {
