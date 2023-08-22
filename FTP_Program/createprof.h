@@ -6,9 +6,13 @@ void menucall();
 
 void CallCrProf();
 
+void storeProfile();
+
 typedef void (*callmenu)();
 
 typedef void (*callCreateProf)();
+
+typedef void (*strProf)();
 
 typedef struct {
     char URI_SERV[256];
@@ -20,8 +24,8 @@ int createProfileMenu() {
     profileFTP *usrprofile;
 
     callmenu CallMenu1 = menucall;
-
     callCreateProf CallProf = CallCrProf;
+    strProf StoreProfile = storeProfile;
 
     char yn[10];
 
@@ -61,44 +65,49 @@ int createProfileMenu() {
                     printf("\nEnter your choice here: ");
                     gets(yn4);
                     switch(*yn4) {
-                        case 1:
+                        case '1':
                             system("cls");
                             fflush(stdin);
                             (*CallMenu1)();
                             break;
-                        case 2:
+                        case '2':
                             system("cls");
                             fflush(stdin);
                             (*CallProf)();
                             break;
-                        case 3:
+                        case '3':
                             system("cls");
                             fflush(stdin);
                             printf("Enter your FTP Username here: ");
-                            scanf("%s", &usrprofile->FTPUSR);
+                            gets(usrprofile->FTPUSR);
                             system("cls");
-                            clearCharBuff();
+                            fflush(stdin);
                             printf("Enter your FTP Password here: ");
-                            scanf("%s", &usrprofile->FTPPSWD);
+                            gets(usrprofile->FTPPSWD);
                             system("cls");
-                            clearCharBuff();
+                            fflush(stdin);
                             char yn5[10];
                             printf("Are these the correct credentials?\n");
                             printf("\n%s\n", usrprofile->FTPUSR);
                             printf("%s\n", usrprofile->FTPPSWD);
                             printf("Type [Y/N] to Continue: ");
                             gets(yn5);
-                            if (*yn5 == 'Y' || *yn5 == 'y')
-                            {
-
-                            } else if (*yn5 == 'N' || *yn5 == 'n') {
-
-                            } else {
+                            switch(*yn5) {
+                            case 'Y': case 'y':
+                                fflush(stdin);
+                                (*StoreProfile)();
+                                break;
+                            case 'N': case 'n':
+                                fflush(stdin);
+                                (*CallProf)();
+                                break;
+                            default:
                                 printf("Invalid Input. Exiting...");
                                 sleep(2);
                                 system("cls");
                                 fflush(stdin);
-                                (*CallProf)();  
+                                (*CallProf)();
+                                break;
                             }
                             break;
                         default:
@@ -159,11 +168,22 @@ int createProfileMenu() {
 }
 
 void storeProfile() {
+    const char *CheckDir = "Profiles";
 
+    struct stat dirStat;
+    if(stat(CheckDir, &dirStat) == 0) {
+        if (S_ISDIR(dirStat.st_mode)) {
+            printf("This directory exists!\n");
+        } else {
+            printf("Path exists, but it's not a directory.\n");
+        }
+    } else {
+        printf("Directory does not exist.\n");
+    }
 }
 
-void CreatingProfile() {
-    FILE *fp;
+void CallstrProf() {
+    storeProfile();
 }
 
 void CallCrProf() {
