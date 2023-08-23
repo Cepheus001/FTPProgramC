@@ -228,9 +228,9 @@ void storeProfile(profileFTP *usrprofileptr) {
     }
 
     strncat(dir, filename, 64);
-    strncat(dir, ".dat", 6);
+    strncat(dir, ".txt", 6);
 
-    FILE *fp = fopen(dir, "wb");
+    FILE *fp = fopen(dir, "w");
     if (fp == NULL) {
         perror("An error occured while opening the file!");
         sleep(2);
@@ -240,7 +240,10 @@ void storeProfile(profileFTP *usrprofileptr) {
         (*CallMenu2)();
     }
 
-    fwrite(usrprofileptr, sizeof(profileFTP), 1, fp);
+    
+    fprintf(fp, "%s\n", usrprofileptr->URI_SERV);
+    fprintf(fp, "%s\n", usrprofileptr->FTPUSR);
+    fprintf(fp, "%s\n", usrprofileptr->FTPPSWD);
 
     fclose(fp);
 
