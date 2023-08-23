@@ -244,11 +244,10 @@ void storeProfile(profileFTP *usrprofileptr) {
 
     fclose(fp);
 
-    free(usrprofileptr);
     system("cls");
     printf("The file has been successfully added!");
     sleep(2);
-    (*CallMenu1)();
+    (*CallMenu2)();
 }
 
 void CallstrProf(profileFTP *usrprofileptr) {
