@@ -212,7 +212,7 @@ void storeProfile(profileFTP *usrprofileptr) {
     char filename[20];
     char dir[128] = "Profiles\\";
 
-    printf("This is your FTP profile!\n");
+    printf("This is your FTP profile!\n\n");
     printf("Username: %s\n", usrprofileptr->FTPUSR);
     printf("Password: %s\n", usrprofileptr->FTPPSWD);
     sleep(2);
@@ -228,7 +228,7 @@ void storeProfile(profileFTP *usrprofileptr) {
     }
 
     strncat(dir, filename, 64);
-    strncat(dir, ".txt", 6);
+    strncat(dir, ".dat", 6);
 
     FILE *fp = fopen(dir, "w");
     if (fp == NULL) {
@@ -240,7 +240,6 @@ void storeProfile(profileFTP *usrprofileptr) {
         (*CallMenu2)();
     }
 
-    
     fprintf(fp, "%s\n", usrprofileptr->URI_SERV);
     fprintf(fp, "%s\n", usrprofileptr->FTPUSR);
     fprintf(fp, "%s\n", usrprofileptr->FTPPSWD);

@@ -2,6 +2,7 @@
 #define MENU_MAIN
 
 #include "createprof.h"
+#include "profSelect.h"
 
 void menucall();
 
@@ -27,7 +28,7 @@ int mainmenu() { //main menu function with basic menu functions
             break;
         case '2':
             fflush(stdin);
-            (*CallMenu0)();
+            viewProf();
             break;
         case '3':
             break;
