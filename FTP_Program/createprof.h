@@ -1,6 +1,11 @@
 #ifndef PROFILE_CREATE
 #define PROFILE_CREATE
 
+typedef struct profileFTP {
+    char URI_SERV[256];
+    char FTPPSWD[64];
+    char FTPUSR[64];
+} profileFTP;
 
 void menucall();
 
@@ -10,22 +15,22 @@ void checkDir();
 
 void storeProfile();
 
-typedef struct {
-    char URI_SERV[256];
-    char FTPPSWD[64];
-    char FTPUSR[64];
-} profileFTP;
-
 typedef void (*callmenu)();
 
 typedef void (*callCreateProf)();
 
-typedef void (*chkDir)();
+typedef void (*chkDir)(profileFTP *usrprofileptr);
 
-typedef void (*strProf)();
+typedef void (*strProf)(profileFTP *usrprofileptr);
+
+void CallstrProf(profileFTP *usrprofileptr);
+
+void CallchkProf(profileFTP *usrprofile);
 
 int createProfileMenu() {
-    profileFTP *usrprofile = malloc(sizeof(profileFTP));
+    profileFTP usrprofile;
+
+    profileFTP *usrprofileptr = &usrprofile;
 
     callmenu CallMenu1 = menucall;
     callCreateProf CallProf = CallCrProf;
@@ -35,10 +40,10 @@ int createProfileMenu() {
 
     system("cls");
     printf("Enter the Desired URI you wish to connect to: ");
-    scanf(" %255s", &usrprofile->URI_SERV);
+    scanf(" %255s", &usrprofileptr->URI_SERV);
     clearCharBuff();
     system("cls");
-    printf("Is this the correct information? Your URI is: %s", usrprofile->URI_SERV);
+    printf("Is this the correct information? Your URI is: %s", usrprofileptr->URI_SERV);
     printf("\nType [Y/N] to continue: ");
     gets(yn);
     printf("\n");
@@ -53,9 +58,9 @@ int createProfileMenu() {
                 case 'y': case 'Y':
                     system("cls");
                     fflush(stdin);
-                    const char* anonlogin = "anonymous";
-                    strncpy(usrprofile->FTPUSR, anonlogin, 64);
-                    strncpy(usrprofile->FTPPSWD, anonlogin, 64);
+                    char* anonlogin = "anonymous";
+                    strncpy(usrprofileptr->FTPUSR, anonlogin, 64);
+                    strncpy(usrprofileptr->FTPPSWD, anonlogin, 64);
                     break;
                 case 'n': case 'N':
                     system("cls");
@@ -83,23 +88,23 @@ int createProfileMenu() {
                             system("cls");
                             fflush(stdin);
                             printf("Enter your FTP Username here: ");
-                            fgets(usrprofile->FTPUSR, sizeof(profileFTP), stdin);
+                            fgets(usrprofileptr->FTPUSR, sizeof(profileFTP), stdin);
                             system("cls");
                             fflush(stdin);
                             printf("Enter your FTP Password here: ");
-                            fgets(usrprofile->FTPPSWD, sizeof(profileFTP), stdin);
+                            fgets(usrprofileptr->FTPPSWD, sizeof(profileFTP), stdin);
                             system("cls");
                             fflush(stdin);
                             char yn5[10];
                             printf("Are these the correct credentials?\n");
-                            printf("\n%s\n", usrprofile->FTPUSR);
-                            printf("%s\n", usrprofile->FTPPSWD);
+                            printf("\n%s\n", usrprofileptr->FTPUSR);
+                            printf("%s\n", usrprofileptr->FTPPSWD);
                             printf("Type [Y/N] to Continue: ");
                             gets(yn5);
                             switch(*yn5) {
                             case 'Y': case 'y':
                                 fflush(stdin);
-                                (*chkdir)();
+                                (*chkdir)(usrprofileptr);
                                 break;
                             case 'N': case 'n':
                                 fflush(stdin);
@@ -168,12 +173,12 @@ int createProfileMenu() {
             break;
     }
     fflush(stdin);
-    //free(usrprofile);
     return 0;
 }
 
-void checkDir(strProf strprof) {
+void checkDir(profileFTP *usrprofileptr) {
 
+    strProf strprof = storeProfile;
     callmenu CallMenu1 = menucall;
 
     const char *CheckDir = "Profiles";
@@ -184,7 +189,7 @@ void checkDir(strProf strprof) {
             printf("This directory exists!\n");
             sleep(2);
             system("cls");
-            (*strprof)();
+            (*strprof)(usrprofileptr);
         } else {
             printf("Path exists, but it's not a directory.\n");
             sleep(2);
@@ -196,26 +201,27 @@ void checkDir(strProf strprof) {
         printf("Directory has been created!\n");
         sleep(2);
         system("cls");
-        (*strprof)();
+        (*strprof)(usrprofileptr);
     }
 }
 
-void storeProfile(profileFTP *usrprofile) {
+void storeProfile(profileFTP *usrprofileptr) {
     
-    callmenu CallMenu1 = menucall;
+    callmenu CallMenu2 = menucall;
 
     char filename[20];
     char dir[128] = "Profiles\\";
 
     printf("This is your FTP profile!\n");
-    printf("Username: %s\n", usrprofile->FTPUSR);
-    printf("Password: %s\n", usrprofile->FTPPSWD);
+    printf("Username: %s\n", usrprofileptr->FTPUSR);
+    printf("Password: %s\n", usrprofileptr->FTPPSWD);
     sleep(2);
     system("cls");
     printf("Enter the file name here: ");
-    scanf("%s", filename);
+    fgets(filename, sizeof(filename), stdin);
+    filename[strcspn(filename, "\n")] = '\0';
 
-    for (int i = 0; i <= sizeof(filename); i++) {
+    for (int i = 0; filename[i] != '\0'; i++) {
         if (isspace(filename[i])) {
             filename[i] = '_';
         }
@@ -231,27 +237,26 @@ void storeProfile(profileFTP *usrprofile) {
         system("cls");
         printf("Going back to main menu...");
         sleep(2);
-        (*CallMenu1)();
+        (*CallMenu2)();
     }
 
-    fwrite(&usrprofile, sizeof(profileFTP), 1, fp);
+    fwrite(usrprofileptr, sizeof(profileFTP), 1, fp);
 
     fclose(fp);
 
-    free(usrprofile);
-    clearCharBuff();
+    free(usrprofileptr);
     system("cls");
     printf("The file has been successfully added!");
     sleep(2);
     (*CallMenu1)();
 }
 
-void CallstrProf(strProf strprof, profileFTP *usrprofile) {
-    storeProfile(usrprofile);
+void CallstrProf(profileFTP *usrprofileptr) {
+    storeProfile(usrprofileptr);
 }
 
-void CallchkProf(strProf strprof) {
-    checkDir(strprof);
+void CallchkProf(profileFTP *usrprofileptr) {
+    checkDir(usrprofileptr);
 }
 
 void CallCrProf() {
