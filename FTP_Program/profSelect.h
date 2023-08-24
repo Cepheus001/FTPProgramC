@@ -14,7 +14,7 @@ void takeInputDir() {
     printf("Enter Numbers 1 through 9 to make a selection: ");
     scanf("%d", &entryDir);
     switch(entryDir) {
-
+        
     }
 }
 

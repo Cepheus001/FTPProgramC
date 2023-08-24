@@ -19,24 +19,167 @@ typedef void (*callmenu)();
 
 typedef void (*callCreateProf)();
 
+typedef void (*callURIBUILDER)(profileFTP *usrprofileptr);
+
 typedef void (*chkDir)(profileFTP *usrprofileptr);
 
 typedef void (*strProf)(profileFTP *usrprofileptr);
 
 void CallstrProf(profileFTP *usrprofileptr);
 
-void CallchkProf(profileFTP *usrprofile);
+void CallchkProf(profileFTP *usrprofileptr);
+
+void calluribuilder(profileFTP *usrprofileptr);
+
+void createProf() {
+
+    chkDir chkdir = checkDir;
+
+    system("cls");
+    fflush(stdin);
+    printf("Enter your FTP Username here: ");
+    fgets(usrprofileptr->FTPUSR, sizeof(profileFTP), stdin);
+    system("cls");
+    fflush(stdin);
+    printf("Enter your FTP Password here: ");
+    fgets(usrprofileptr->FTPPSWD, sizeof(profileFTP), stdin);
+    system("cls");
+    fflush(stdin);
+    char yn5[10];
+    printf("Are these the correct credentials?\n");
+    printf("\n%s\n", usrprofileptr->FTPUSR);
+    printf("%s\n", usrprofileptr->FTPPSWD);
+    printf("Type [Y/N] to Continue: ");
+    gets(yn5);
+        switch(*yn5) {
+        case 'Y': case 'y':
+            fflush(stdin);
+            (*chkdir)(usrprofileptr);
+            break;
+        case 'N': case 'n':
+            fflush(stdin);
+            (*CallProf)();
+            break;
+        default:
+            printf("Invalid Input. Exiting...");
+            sleep(2);
+            system("cls");
+            fflush(stdin);
+            (*CallProf)();
+            break;
+        }
+}
+
+void enterURI(profileFTP *usrprofileptr) {
+
+    char yn[4];
+
+    callURIBUILDER call_UriBuilder = calluribuilder;
+
+    system("cls");
+    printf("Enter the Desired URI you wish to connect to: ");
+    scanf(" %255s", &usrprofileptr->URI_SERV);
+    clearCharBuff();
+    system("cls");
+    printf("Is this the correct information? Your URI is: %s", usrprofileptr->URI_SERV);
+    printf("\nType [Y/N] to continue: ");
+    gets(yn);
+    printf("\n");
+     switch(*yn) {
+        case 'y': case 'Y':
+            fflush(stdin);
+            system("cls");
+            printf("The URI has been added successfully!\n");
+            sleep(2);
+            system("cls");
+            (*CallProf)();
+            break;
+        case 'n': case 'N':
+            fflush(stdin);
+            system("cls");
+            char yn2[4];
+            printf("Would you like to go back to the main menu or try again?\n");
+            printf("[1] - Main Menu\n");
+            printf("[2] - Try again\n");
+            printf("Enter Option here: ");
+            gets(yn2);
+            if ( *yn2 == '1') {
+                system("cls");
+                fflush(stdin);
+                (*CallProf)();
+            } else if ( *yn2 == '2') {
+                printf("Retrying...");
+                fflush(stdin);
+                sleep(2);
+                system("cls");
+                (*call_UriBuilder)();
+            } else {
+                printf("Invalid Input!");
+                fflush(stdin);
+                sleep(2);
+                system("cls");
+                (*CallProf)();
+            }
+            break;
+        default:
+            printf("Invalid Input!\n");
+            printf("Please try again!\n");
+            sleep(2);
+            (*CallProf)();
+            break;
+    }
+}
+
+void anonLogin(profileFTP *usrprofileptr) {
+
+    callCreateProf CallProf = CallCrProf;
+    //callmenu CallMenu1 = menucall;
+
+    system("cls");
+    fflush(stdin);
+    char* anonlogin = "anonymous";
+    strncpy(usrprofileptr->FTPUSR, anonlogin, 64);
+    strncpy(usrprofileptr->FTPPSWD, anonlogin, 64);
+    printf("Anonymous login has been set!");
+    sleep(2);
+    system("cls");
+    (*CallProf)();
+
+}
 
 int createProfileMenu() {
     profileFTP usrprofile;
-
     profileFTP *usrprofileptr = &usrprofile;
 
     callmenu CallMenu1 = menucall;
     callCreateProf CallProf = CallCrProf;
     chkDir chkdir = checkDir;
 
-    char yn[10];
+    system("cls");
+    fflush(stdin);
+    char yn[4];
+    printf("Would you like to go back to:\n");
+    printf("[1] - Main Menu\n");
+    printf("[2] - Enter a new URI\n");
+    printf("\nOr continue?\n");
+    printf("[3] - Create Custom Profile\n");
+    printf("\nEnter your choice here: ");
+    gets(yn);
+    switch(*yn) {
+        case '1':
+            fflush(stdin);
+            (*CallMenu1)();
+        case '2':
+            fflush(stdin);
+            enterURI(usrprofileptr);
+        case '3':
+            fflush(stdin);
+            createProf();
+        default:
+    }
+
+
+  /*  char yn[10];
 
     system("cls");
     printf("Enter the Desired URI you wish to connect to: ");
@@ -56,7 +199,7 @@ int createProfileMenu() {
             gets(yn3);
             switch(*yn3) {
                 case 'y': case 'Y':
-                    system("cls");
+                  system("cls");
                     fflush(stdin);
                     char* anonlogin = "anonymous";
                     strncpy(usrprofileptr->FTPUSR, anonlogin, 64);
@@ -69,6 +212,7 @@ int createProfileMenu() {
                     printf("Would you like to go back to:\n");
                     printf("[1] - Main Menu\n");
                     printf("[2] - Restart Profile Creation\n");
+                    printf("[3] - Enter a new URI")
                     printf("\nOr continue?\n");
                     printf("[3] - Create Custom Profile\n");
                     printf("\nEnter your choice here: ");
@@ -171,10 +315,10 @@ int createProfileMenu() {
             fflush(stdin);
             (*CallMenu1)();
             break;
-    }
+    } */
     fflush(stdin);
-    return 0;
-}
+    return 0; 
+} 
 
 void checkDir(profileFTP *usrprofileptr) {
 
@@ -250,6 +394,10 @@ void storeProfile(profileFTP *usrprofileptr) {
     printf("The file has been successfully added!");
     sleep(2);
     (*CallMenu2)();
+}
+
+void calluribuilder(profileFTP *usrprofileptr) {
+    enterURI(usrprofileptr);
 }
 
 void CallstrProf(profileFTP *usrprofileptr) {
