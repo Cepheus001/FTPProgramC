@@ -19,21 +19,22 @@ typedef void (*callmenu)();
 
 typedef void (*callCreateProf)();
 
-typedef void (*callURIBUILDER)(profileFTP *usrprofileptr);
-
 typedef void (*chkDir)(profileFTP *usrprofileptr);
 
 typedef void (*strProf)(profileFTP *usrprofileptr);
+
+typedef void (*callURIBUILDER)(profileFTP *usrprofileptr);
+
+void calluribuilder(profileFTP *usrprofileptr);
 
 void CallstrProf(profileFTP *usrprofileptr);
 
 void CallchkProf(profileFTP *usrprofileptr);
 
-void calluribuilder(profileFTP *usrprofileptr);
-
-void createProf() {
+void createProf(profileFTP *usrprofileptr) {
 
     chkDir chkdir = checkDir;
+    callCreateProf CallProf = CallCrProf;
 
     system("cls");
     fflush(stdin);
@@ -74,6 +75,7 @@ void enterURI(profileFTP *usrprofileptr) {
 
     char yn[4];
 
+    callCreateProf CallProf = CallCrProf;
     callURIBUILDER call_UriBuilder = calluribuilder;
 
     system("cls");
@@ -112,7 +114,7 @@ void enterURI(profileFTP *usrprofileptr) {
                 fflush(stdin);
                 sleep(2);
                 system("cls");
-                (*call_UriBuilder)();
+                (*call_UriBuilder)(usrprofileptr);
             } else {
                 printf("Invalid Input!");
                 fflush(stdin);
@@ -133,7 +135,6 @@ void enterURI(profileFTP *usrprofileptr) {
 void anonLogin(profileFTP *usrprofileptr) {
 
     callCreateProf CallProf = CallCrProf;
-    //callmenu CallMenu1 = menucall;
 
     system("cls");
     fflush(stdin);
@@ -154,168 +155,44 @@ int createProfileMenu() {
     callmenu CallMenu1 = menucall;
     callCreateProf CallProf = CallCrProf;
     chkDir chkdir = checkDir;
+    callURIBUILDER call_UriBuilder = calluribuilder;
 
     system("cls");
     fflush(stdin);
     char yn[4];
-    printf("Would you like to go back to:\n");
+    printf("################################\n");
     printf("[1] - Main Menu\n");
     printf("[2] - Enter a new URI\n");
+    printf("[3] - Load Anonymous Credentials\n");
+    printf("[4] - Create Custom Profile\n");
+    printf("################################\n");
     printf("\nOr continue?\n");
-    printf("[3] - Create Custom Profile\n");
     printf("\nEnter your choice here: ");
     gets(yn);
     switch(*yn) {
         case '1':
             fflush(stdin);
             (*CallMenu1)();
+            break;
         case '2':
             fflush(stdin);
-            enterURI(usrprofileptr);
+            (*call_UriBuilder)(usrprofileptr);
+            break;
         case '3':
             fflush(stdin);
-            createProf();
+            anonLogin(usrprofileptr);
+            break;
+        case '4':
+            fflush(stdin);
+            createProf(usrprofileptr);
+            break;
         default:
+            fflush(stdin);
+            printf("Invalid Input!\n");
+            printf("Please try again!\n");
+            (*CallProf)();
+            break;
     }
-
-
-  /*  char yn[10];
-
-    system("cls");
-    printf("Enter the Desired URI you wish to connect to: ");
-    scanf(" %255s", &usrprofileptr->URI_SERV);
-    clearCharBuff();
-    system("cls");
-    printf("Is this the correct information? Your URI is: %s", usrprofileptr->URI_SERV);
-    printf("\nType [Y/N] to continue: ");
-    gets(yn);
-    printf("\n");
-    switch(*yn) {
-        case 'y': case 'Y':
-            system("cls");
-            fflush(stdin);
-            char yn3[10];
-            printf("Would you like to login anonymously? [Y/N]");
-            gets(yn3);
-            switch(*yn3) {
-                case 'y': case 'Y':
-                  system("cls");
-                    fflush(stdin);
-                    char* anonlogin = "anonymous";
-                    strncpy(usrprofileptr->FTPUSR, anonlogin, 64);
-                    strncpy(usrprofileptr->FTPPSWD, anonlogin, 64);
-                    break;
-                case 'n': case 'N':
-                    system("cls");
-                    fflush(stdin);
-                    char yn4[10];
-                    printf("Would you like to go back to:\n");
-                    printf("[1] - Main Menu\n");
-                    printf("[2] - Restart Profile Creation\n");
-                    printf("[3] - Enter a new URI")
-                    printf("\nOr continue?\n");
-                    printf("[3] - Create Custom Profile\n");
-                    printf("\nEnter your choice here: ");
-                    gets(yn4);
-                    switch(*yn4) {
-                        case '1':
-                            system("cls");
-                            fflush(stdin);
-                            (*CallMenu1)();
-                            break;
-                        case '2':
-                            system("cls");
-                            fflush(stdin);
-                            (*CallProf)();
-                            break;
-                        case '3':
-                            system("cls");
-                            fflush(stdin);
-                            printf("Enter your FTP Username here: ");
-                            fgets(usrprofileptr->FTPUSR, sizeof(profileFTP), stdin);
-                            system("cls");
-                            fflush(stdin);
-                            printf("Enter your FTP Password here: ");
-                            fgets(usrprofileptr->FTPPSWD, sizeof(profileFTP), stdin);
-                            system("cls");
-                            fflush(stdin);
-                            char yn5[10];
-                            printf("Are these the correct credentials?\n");
-                            printf("\n%s\n", usrprofileptr->FTPUSR);
-                            printf("%s\n", usrprofileptr->FTPPSWD);
-                            printf("Type [Y/N] to Continue: ");
-                            gets(yn5);
-                            switch(*yn5) {
-                            case 'Y': case 'y':
-                                fflush(stdin);
-                                (*chkdir)(usrprofileptr);
-                                break;
-                            case 'N': case 'n':
-                                fflush(stdin);
-                                (*CallProf)();
-                                break;
-                            default:
-                                printf("Invalid Input. Exiting...");
-                                sleep(2);
-                                system("cls");
-                                fflush(stdin);
-                                (*CallProf)();
-                                break;
-                            }
-                            break;
-                        default:
-                            printf("Invalid Input. Exiting...");
-                            sleep(2);
-                            system("cls");
-                            fflush(stdin);
-                            (*CallProf)();
-                            break;
-                    }
-                    break;
-                default:
-                    printf("Invalid Input. Exiting...");
-                    sleep(2);
-                    system("cls");
-                    fflush(stdin);
-                    (*CallProf)();
-                    break;
-            }
-            break;
-        case 'n': case 'N':
-            fflush(stdin);
-            char yn2[10];
-            system("cls");
-            printf("Would you like to go back to the main menu?\n");
-            printf("[1] - Main Menu\n");
-            printf("[2] - Restart Profile Creation\n");
-            printf("\nEnter your choice here: ");
-            gets(yn2);
-            switch(*yn2) {
-                case '1':
-                    system("cls");
-                    fflush(stdin);
-                    (*CallMenu1)();
-                    break;
-                case '2':
-                    fflush(stdin);
-                    (*CallProf)();
-                    break;
-                default:
-                    printf("Invalid Input. Exiting...");
-                    sleep(2);
-                    system("cls");
-                    fflush(stdin);
-                    (*CallMenu1)();
-                    break;
-            }
-            break;
-        default:
-            printf("\nInvalid input. Resetting...");
-            sleep(2);
-            fflush(stdin);
-            (*CallMenu1)();
-            break;
-    } */
     fflush(stdin);
     return 0; 
 } 
