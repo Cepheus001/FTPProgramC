@@ -3,18 +3,34 @@
 
 void menucall();
 
+void callViewProf();
+
+typedef void (*CallViewProf)();
+
 typedef void (*callmenu)();
 
-void takeInputDir() {
+typedef void (*callclosedir)(DIR *dir);
+
+void closeDirectoryView(DIR *dir);
+
+void takeInputDir(DIR *dir) {
 
     callmenu CallMenu4 = menucall;
+    callclosedir CallCloseDir = closeDirectoryView;
+    CallViewProf callviewprof = callViewProf;
 
-    int entryDir;
+    char entryDir[4];
 
-    printf("Enter Numbers 1 through 9 to make a selection: ");
-    scanf("%d", &entryDir);
-    switch(entryDir) {
-        
+    printf("\nDirectories/Files [0-9]  Quit [Q]");
+    printf("\nMake a selection here: ");
+    gets(entryDir);
+    switch(*entryDir) {
+        case 'q': case 'Q':
+            fflush(stdin);
+            (*CallCloseDir)(dir);
+        default:
+            printf("Error. Invalid Input.");
+            (*callviewprof)();
     }
 }
 
@@ -53,8 +69,18 @@ void viewProf() {
             (*CallMenu3)();
         }
     }
-    closedir(dir);
-
+    takeInputDir(dir);
 } 
+
+void callViewProf() {
+    viewProf();
+}
+
+void closeDirectoryView(DIR *dir) {
+    
+    callmenu CallMenu5 = menucall;
+    closedir(dir);
+    (*CallMenu5)();  
+}
 
 #endif
