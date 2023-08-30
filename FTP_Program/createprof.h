@@ -46,12 +46,12 @@ void createProf(profileFTP *usrprofileptr) {
     fgets(usrprofileptr->FTPPSWD, sizeof(profileFTP), stdin);
     system("cls");
     fflush(stdin);
-    char yn5[10];
+    char yn5[4];
     printf("Are these the correct credentials?\n");
     printf("\n%s\n", usrprofileptr->FTPUSR);
     printf("%s\n", usrprofileptr->FTPPSWD);
     printf("Type [Y/N] to Continue: ");
-    gets(yn5);
+    fgets(yn5, 4, stdin);
         switch(*yn5) {
         case 'Y': case 'y':
             fflush(stdin);
@@ -85,7 +85,7 @@ void enterURI(profileFTP *usrprofileptr) {
     system("cls");
     printf("Is this the correct information? Your URI is: %s", usrprofileptr->URI_SERV);
     printf("\nType [Y/N] to continue: ");
-    gets(yn);
+    fgets(yn, 4, stdin);
     printf("\n");
      switch(*yn) {
         case 'y': case 'Y':
@@ -104,7 +104,7 @@ void enterURI(profileFTP *usrprofileptr) {
             printf("[1] - Main Menu\n");
             printf("[2] - Try again\n");
             printf("Enter Option here: ");
-            gets(yn2);
+            fgets(yn2, 4, stdin);
             if ( *yn2 == '1') {
                 system("cls");
                 fflush(stdin);
@@ -168,7 +168,7 @@ int createProfileMenu() {
     printf("################################\n");
     printf("\nOr continue?\n");
     printf("\nEnter your choice here: ");
-    gets(yn);
+    fgets(yn, 4, stdin);
     switch(*yn) {
         case '1':
             fflush(stdin);

@@ -12,7 +12,7 @@ int mainmenu() { //main menu function with basic menu functions
 
     callmenu CallMenu0 = menucall;
 
-    char input[10];
+    char input[4];
     system("cls");
     printf("\n====================\n");
     printf("[1] - Create Profile\n");
@@ -20,7 +20,7 @@ int mainmenu() { //main menu function with basic menu functions
     printf("[3] - Exit          \n");
     printf("====================\n\n");
     printf("Enter Input: ");
-    gets(input);
+    fgets(input, 4, stdin);
     switch(*input) {
         case '1':
             fflush(stdin);
@@ -31,6 +31,8 @@ int mainmenu() { //main menu function with basic menu functions
             viewProf();
             break;
         case '3':
+            fflush(stdin);
+            exit(1);
             break;
         default:
             printf("\nError. Input is Invalid.\n");

@@ -23,7 +23,7 @@ void takeInputDir(DIR *dir) {
 
     printf("\nDirectories/Files [0-9]  Quit [Q]");
     printf("\nMake a selection here: ");
-    gets(entryDir);
+    fgets(entryDir, 4, stdin);
     switch(*entryDir) {
         case 'q': case 'Q':
             fflush(stdin);
